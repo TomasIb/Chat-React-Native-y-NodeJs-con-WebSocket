@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { View, Text, FlatList,TouchableOpacity,StyleSheet ,Dimensions,Alert} from "react-native";
 import { ListItem } from "react-native-elements";
 import { Icon } from 'react-native-elements'
+import Toast, {DURATION} from 'react-native-easy-toast'
 var {height, width} = Dimensions.get('window');
 
 const list = [
@@ -24,16 +25,13 @@ class Chats extends Component {
     constructor(props){
       super(props)
       console.log(props) 
-      state = {  contactsList : [],   historial_messages: props.screenProps.historial_messages}
-
+      state = {  contactsList : props.screenProps.contactsList,   historial_messages: props.screenProps.historial_messages}
+      
     }
     static navigationOptions ={
       title: 'Chats',
     }
 
-    
-
-  
   
    
     keyExtractor = (item, index) => index.toString()
@@ -48,15 +46,16 @@ class Chats extends Component {
           title: item.username[0]
         }}
         onPress={()=>{ 
-          
-          this.props.navigation.navigate('Chat',{historial_messages:this.props.screenProps.historial_messages, username:item.username , ip:item.ip}
+          this.refs.toast.show(this.props.screenProps.push_message,DURATION.LENGTH_LONG);
+          this.props.navigation.navigate('Chat',{historial_messages:this.props.screenProps.historial_messages, username:item.username , ip:item.ip})
      
-        )}}
+      }}
       />
     )
     
     _listEmptyComponent = () => {
       return (
+
         <View style={styles.container_empty}>
           <Text style={styles._text} > No hay chats disponibles </Text>    
         </View>
@@ -68,6 +67,7 @@ class Chats extends Component {
   render () {
     return(
     <View style={styles.container}>
+      <Toast ref="toast" position="top" positionValue={120} fadeInDuration = {1000}  style={styles.toast}/>
       <FlatList
           keyExtractor={this.keyExtractor}
           data={list}
@@ -113,4 +113,8 @@ const styles = StyleSheet.create({
     borderRadius: 30, 
     elevation: 8 
     }, 
+    toast:{
+      top:-120,
+      backgroundColor:'gray',
+    }
 });

@@ -51,16 +51,16 @@ export default class NewContact extends Component{
             <TouchableOpacity
                 onPress={()=>{
                     var contact = ({username: this.state.username, ip: this.state.ip ,avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',})
-                    console.log(this.props.navigation.state)
+                    
+                    this.props.screenProps.contacts_list.push(contact)
+                    console.log(this.props.screenProps.contacts_list)
                     this.setState({
-                        contactsList: this.props.navigation.state.params.contactsList.push(contact)
+                        contactsList: this.props.screenProps.contacts_list,
+                        refreshing: true,
 
                     })
-                    this.props.handler
-                    this.props.navigation.navigate('Contacts', {
-                       contactsList: this.props.navigation.state.params.contactList,
-                       refreshing: true
-                    });
+                    this.props.screenProps.refresh_contacts_list()
+                    this.props.navigation.navigate('Contacts', state);
 
 
                     // // // this.props.addItem("asdas")

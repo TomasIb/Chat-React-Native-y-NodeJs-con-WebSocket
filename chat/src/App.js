@@ -3,19 +3,19 @@ import { View, Text } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import Chats from './components/Chats'
 import Contacts from './components/Contacts'
-
-
-
 import NewContact from './components/NewContact'
 import Chat from './components/Chat'
 import { w3cwebsocket as W3CWebSocket } from "websocket";
+import Toast, {DURATION} from 'react-native-easy-toast'
 
 var hostname = "192.168.0.9"
 var port = "8999";
 const socket = new W3CWebSocket("ws://192.168.0.9:8999");
 
 
- historial_messages = []
+push_message=""
+historial_messages = []
+contacts_list = []
 
 
 
@@ -25,7 +25,6 @@ socket.onmessage = function(e) {
     if(data.method == "update"){
       console.log(historial_messages)
       let id = historial_messages.length
-
       msg= {
           text : data.params.message,
           _id: id,
@@ -38,13 +37,10 @@ socket.onmessage = function(e) {
       }
 
       historial_messages.push(msg)
+      push_message = msg.text
       //PUSH
-      
+     
 
-      
-        
-  
-        
     }
 
 };
@@ -74,13 +70,9 @@ const AppNavigator = createStackNavigator({
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class App extends React.Component {
-
-  
-  
   render() {
     
-
-    return <AppContainer screenProps={{socket: socket,historial_messages: historial_messages,onmessage:socket.onmessage.bind(this)}} />;
+    return <AppContainer screenProps={{socket: socket,historial_messages: historial_messages,onmessage:socket.onmessage.bind(this) ,contacts_list: contacts_list,refresh_contacts_list: ""}} />;
   }
 
 

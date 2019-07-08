@@ -33,12 +33,14 @@ class Contacts extends Component {
       super(props)
       console.log(props)
       this.state = { 
-        contactsList : [],
+        contactsList : props.screenProps.contactList,
         refreshing:false, 
         messages: [],
         historial_messages: props.screenProps.historial_messages
         }
-      this.handler = this.handler.bind(this)
+      
+      props.screenProps.refresh_contacts_list = this.loadMore.bind(this)
+    
    
     }
     
@@ -51,30 +53,11 @@ class Contacts extends Component {
       )
     });
 
-    handler(val) {
-      this.setState({
-        contactsList: val
-      })
-    }
-    
-  
-    // UNSAFE_componentDidUpdate(prevProps, prevState) {
-    //   console.log(prevState);
-    //   console.log(state);   
-    //   var prev =  prevState.contactsList.length
+    componentDidMount() {
       
-    //   if (prev < state.contactsList.length) {
-        
-    //     this.loadMore()
-    //     return null
-    //   }
-    //   return null
-  
-    // }
-    
-    // componentDidMount() {
-    //   this.loadMore()
-    // }
+      this.loadMore()
+      
+    }
     
 
     keyExtractor = (item, index) => index.toString()
@@ -88,7 +71,7 @@ class Contacts extends Component {
           source: item.avatar_url && { uri: item.avatar_url },
           title: item.username[0]
         }}
-        onPress={()=>{ this.props.navigation.navigate('Chat',this.props.navigation.navigate('Chat',{historial_messages:props.screenProps.historial_messages, username:item.username , ip:item.ip}))}}
+        onPress={()=>{ this.props.navigation.navigate('Chat',this.props.navigation.navigate('Chat',{historial_messages:this.props.screenProps.historial_messages, username:item.username , ip:item.ip}))}}
       />
     )
   
@@ -108,19 +91,17 @@ class Contacts extends Component {
         </TouchableOpacity>
     );
 }
-setNewContacts(){
-  this.setState({
-    contactsList : state.contactsList,
-    refreshing:false
-  })
-  
-}
+
+
 loadMore = () => {
   this.setState({
     
     refreshing: true,
   },()=>{
-    this.setNewContacts()
+    this.setState({
+      contactsList : state.contactsList,
+      refreshing:false
+    })
   });
 
 };
@@ -131,7 +112,7 @@ loadMore = () => {
         <View style={styles.container}>
           <FlatList
               keyExtractor={this.keyExtractor}
-              data={state.contactsList}
+              data={this.props.screenProps.contacts_list}
               ListEmptyComponent={this._listEmptyComponent}
               renderItem={this.renderItem}
               extraData={state.contactsList}
