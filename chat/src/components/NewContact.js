@@ -59,8 +59,8 @@ export default class NewContact extends Component{
                         refreshing: true,
 
                     })
-                    this.props.screenProps.refresh_contacts_list()
-                    this.props.navigation.navigate('Contacts', state);
+                    this.props.screenProps.refreshContactsFunction()
+                    this.props.navigation.navigate('Contacts', this.state);
 
 
                     // // // this.props.addItem("asdas")

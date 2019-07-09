@@ -44,7 +44,7 @@ export default class Chat extends Component{
          console.log(e.data)
        let  data = JSON.parse(e.data)
         if(data.method == "update"){
-            let id = state.historial_messages.length
+            let id = this.props.screenProps.historial_messages.length
             this.setState({
                 messageToMe:[{
                 text :   data.params.message,
@@ -57,13 +57,76 @@ export default class Chat extends Component{
                 }]
             })
         console.log(this.state.messageToMe)
-          this.onSend(this.state.messageToMe)
+        this.onSend(this.state.messageToMe)   
 
-    
-            
+     
+        this.newChat(data.params.from)
+        console.log(this.props.screenProps.chatsList)
+        this.props.screenProps.refreshChatsFunction()
+
+        
+
         }
 
+            
+
     }
+    
+
+    exist_chat(from){
+        let exist = false;
+        this.props.screenProps.chats_list.forEach(element => {
+          if(element.ip == from ){
+            exist = true;
+            return exist;
+          }
+        });
+        return exist;
+    }
+
+    exist_contact(from){
+        let exist = false;
+        this.props.screenProps.contacts_list.forEach(element => {
+          if(element.ip == from ){
+            exist = element.username;
+            return exist;
+          }
+        });
+        return exist;
+    }
+
+  newChat(from){
+    if(this.exist_chat(from) == false){
+        let username = from
+        res = this.exist_contact(from)
+
+        if(res != false) 
+            username = res
+
+        this.exist_contact(from);
+        console.log("asdsad")
+        this.props.screenProps.chats_list.push({
+            'username': username,
+            'avatar_url': 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+            'ip': from
+        })
+  }
+
+
+  if(exist_chat(from) == true) {
+    res = exist_contact(from)
+    if(res != false)
+      chats_list.forEach(element =>{
+        if(element.ip == from){
+            element.username = res
+          
+        }
+      })
+  }
+  console.log(this.props.screenProps.chats_list)
+}
+      
+      
   
   
     static navigationOptions = ({ navigation }) => ({
@@ -77,7 +140,7 @@ export default class Chat extends Component{
      componentWillMount() {
        
         let user_history = []
-        state.historial_messages.forEach(element => {
+        this.state.historial_messages.forEach(element => {
            
             if(element.user.name == this.state.ip || element.user.name == this.state.username){
                 user_history.push(element)
@@ -107,7 +170,7 @@ export default class Chat extends Component{
       
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
-      historial_messages: state.historial_messages.push(messages[0])
+      historial_messages: this.props.screenProps.historial_messages.push(messages[0])
   
     }),
 
@@ -128,6 +191,8 @@ export default class Chat extends Component{
                    
                     this.messageToServer.params.message = message[0].text
                     this.messageToServer.params.to = this.state.ip
+                    this.newChat(this.state.ip)
+                    this.props.screenProps.refreshChatsFunction()
                     
                     
                     this.props.screenProps.socket.send(JSON.stringify(this.messageToServer))

@@ -39,7 +39,7 @@ class Contacts extends Component {
         historial_messages: props.screenProps.historial_messages
         }
       
-      props.screenProps.refresh_contacts_list = this.loadMore.bind(this)
+      props.screenProps.refreshContactsFunction = this.loadData.bind(this)
     
    
     }
@@ -47,7 +47,7 @@ class Contacts extends Component {
     static navigationOptions = ({navigation,screenProps}) => ({
       title: 'Contactos',
       headerRight:(
-                  <TouchableOpacity onPress={() => navigation.navigate('NewContact', state) }>
+                  <TouchableOpacity onPress={() => navigation.navigate('NewContact', this.state) }>
                     <Icon   name='user-plus' type='font-awesome' color='#F05D3D'  />
                   </TouchableOpacity>
       )
@@ -55,7 +55,7 @@ class Contacts extends Component {
 
     componentDidMount() {
       
-      this.loadMore()
+      this.loadData()
       
     }
     
@@ -71,7 +71,7 @@ class Contacts extends Component {
           source: item.avatar_url && { uri: item.avatar_url },
           title: item.username[0]
         }}
-        onPress={()=>{ this.props.navigation.navigate('Chat',this.props.navigation.navigate('Chat',{historial_messages:this.props.screenProps.historial_messages, username:item.username , ip:item.ip}))}}
+        onPress={()=>{ this.props.navigation.navigate('Chat',this.props.navigation.navigate('Chat',{state: this.state,historial_messages:this.props.screenProps.historial_messages, username:item.username , ip:item.ip}))}}
       />
     )
   
@@ -93,13 +93,12 @@ class Contacts extends Component {
 }
 
 
-loadMore = () => {
+loadData = () => {
   this.setState({
-    
     refreshing: true,
   },()=>{
     this.setState({
-      contactsList : state.contactsList,
+      contactsList : this.state.contactsList,
       refreshing:false
     })
   });
@@ -115,9 +114,9 @@ loadMore = () => {
               data={this.props.screenProps.contacts_list}
               ListEmptyComponent={this._listEmptyComponent}
               renderItem={this.renderItem}
-              extraData={state.contactsList}
+              extraData={this.state.contactsList}
               refreshing={this.state.refreshing}
-              onRefresh = { this.loadMore}
+              onRefresh = { this.loadData}
               
             />
        

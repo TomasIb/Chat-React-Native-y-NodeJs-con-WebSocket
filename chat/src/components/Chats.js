@@ -2,20 +2,22 @@ import React, { Component } from "react";
 import { View, Text, FlatList,TouchableOpacity,StyleSheet ,Dimensions,Alert} from "react-native";
 import { ListItem } from "react-native-elements";
 import { Icon } from 'react-native-elements'
-import Toast, {DURATION} from 'react-native-easy-toast'
+import FlashMessage from "react-native-flash-message";
+
+
 var {height, width} = Dimensions.get('window');
 
 const list = [
-    {
-      username: 'ANDROID',
-      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      ip: '192.168.0.6'
-    },
-    {
-      username: 'MAC',
-      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      ip: '192.168.0.9'
-    },
+    // {
+    //   username: 'ANDROID',
+    //   avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+    //   ip: '192.168.0.6'
+    // },
+    // {
+    //   username: 'MAC',
+    //   avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+    //   ip: '192.168.0.9'
+    // },
 
   ]
 
@@ -25,13 +27,30 @@ class Chats extends Component {
     constructor(props){
       super(props)
       console.log(props) 
-      state = {  contactsList : props.screenProps.contactsList,   historial_messages: props.screenProps.historial_messages}
-      
+      this.state = {  
+          chatsList: props.screenProps.chatsList,
+          refreshing: false,
+          contactsList : props.screenProps.contactsList,
+          messages: [],
+          historial_messages: props.screenProps.historial_messages,
+          
+          
+          
+      }
+
+      props.screenProps.refreshChatsFunction = this.loadData.bind(this)
     }
+
+
     static navigationOptions ={
       title: 'Chats',
     }
 
+   
+
+    componentDidMount() {
+      this.loadData()
+    }
   
    
     keyExtractor = (item, index) => index.toString()
@@ -46,7 +65,7 @@ class Chats extends Component {
           title: item.username[0]
         }}
         onPress={()=>{ 
-          this.refs.toast.show(this.props.screenProps.push_message,DURATION.LENGTH_LONG);
+          // this.refs.toast.show(this.props.screenProps.push_message,DURATION.LENGTH_LONG);
           this.props.navigation.navigate('Chat',{historial_messages:this.props.screenProps.historial_messages, username:item.username , ip:item.ip})
      
       }}
@@ -63,18 +82,38 @@ class Chats extends Component {
     }
 
 
+
+
+loadData = () => {
+  this.setState({
+    refreshing: true,
+  },()=>{
+    this.setState({
+      chatsList : this.state.chatsList,
+      refreshing:false
+    })
+  });
+
+};
+
+
       
   render () {
     return(
     <View style={styles.container}>
-      <Toast ref="toast" position="top" positionValue={120} fadeInDuration = {1000}  style={styles.toast}/>
+   
+      <FlashMessage style= {styles.toast} floating={true} ref="myLocalFlashMessage" hideStatusBar= {true} position="bottom"/> 
+   
       <FlatList
           keyExtractor={this.keyExtractor}
-          data={list}
+          data={this.props.screenProps.chats_list}
           ListEmptyComponent={this._listEmptyComponent}
           renderItem={this.renderItem}
-        />
-      <TouchableOpacity onPress={() => this.props.navigation.navigate('Contacts',state)}
+          extraData={this.state.chatsList}
+          refreshing={this.state.refreshing}
+          onRefresh = {this.loadData}
+      />
+      <TouchableOpacity onPress={() => this.props.navigation.navigate('Contacts',this.state)}
       style={styles.fab}>
       <Icon reversed name='users' type='font-awesome' color='#ffffff' />
     </TouchableOpacity>
@@ -114,7 +153,7 @@ const styles = StyleSheet.create({
     elevation: 8 
     }, 
     toast:{
-      top:-120,
+      flex: 1,
       backgroundColor:'gray',
     }
 });
