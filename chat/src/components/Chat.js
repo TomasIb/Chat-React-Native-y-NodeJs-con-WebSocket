@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-
-
 import { GiftedChat } from 'react-native-gifted-chat';
-import { w3cwebsocket as W3CWebSocket } from "websocket";
+import {YellowBox} from 'react-native';
 
 
 
@@ -12,13 +10,14 @@ export default class Chat extends Component{
     constructor(props){
         super(props)
         
-        
+        YellowBox.ignoreWarnings(['Warning:']);
         props.screenProps.socket.onmessage = this.handleMessage.bind(this);
           
         this.state={
             username:props.navigation.state.params.username,
             ip: props.navigation.state.params.ip,
             historial_messages: props.screenProps.historial_messages,
+            avatar:props.navigation.state.params.avatar,
             messageToMe:   {   
                 _id: '',
                 text: '',
@@ -26,6 +25,7 @@ export default class Chat extends Component{
                 user: {
                     _id: '',
                     name: '',
+                    avatar: props.navigation.state.params.avatar
                 }
             },
         }
@@ -52,7 +52,8 @@ export default class Chat extends Component{
                 createdAt: new Date(),
                 user:{
                     name: data.params.from,
-                    _id: '2'
+                    _id: '2',
+                    
                 }
                 }]
             })
@@ -107,7 +108,6 @@ export default class Chat extends Component{
         console.log("asdsad")
         this.props.screenProps.chats_list.push({
             'username': username,
-            'avatar_url': 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
             'ip': from
         })
   }
@@ -185,7 +185,7 @@ export default class Chat extends Component{
         return(
             <GiftedChat
                 messages={this.state.messages}
-                
+                placeholder="Escribe un mensaje..."
                 onSend={(message)=>{
                     
                    
@@ -203,6 +203,7 @@ export default class Chat extends Component{
                 user={{
                     _id: '1',
                     name: this.state.ip,
+                    // avatar: this.state.avatar
                     
                 }}
             />

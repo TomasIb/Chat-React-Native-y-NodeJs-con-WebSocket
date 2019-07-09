@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text,DeviceEventEmitter } from "react-native";
 import { createStackNavigator, createAppContainer } from "react-navigation";
 import Chats from './components/Chats'
 import Contacts from './components/Contacts'
@@ -26,7 +26,7 @@ socket.onmessage = function(e) {
     console.log("Received: '" + e.data + "'");
     data = JSON.parse(e.data)
     if(data.method == "update"){
-      console.log(historial_messages)
+
       let id = historial_messages.length
       msg= {
           text : data.params.message,
@@ -48,7 +48,7 @@ socket.onmessage = function(e) {
             username = res
           chats_list.push({
             'username': username,
-            'avatar_url': 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+            'avatar_url': 'https://i.pravatar.cc/100',
             'ip': data.params.from
           })
         }
@@ -62,16 +62,20 @@ socket.onmessage = function(e) {
               }
             })
         }
-
+         name = exist_contact(data.params.from)
+         if(name == false){
+            name = data.params.from
+         }
         showMessage({
-          message: username,
+          message: name,
           description: data.params.message,
           type: "success",
         });
-      overlay=true
+        
+        DeviceEventEmitter.emit('eventKey', {name:'John', age:23});
 
-      
-      
+     
+     
 
     }
 
@@ -108,6 +112,7 @@ socket.onopen = function() {
 
 
 const AppNavigator = createStackNavigator({
+ 
   Chats: {
     screen: Chats
   },
@@ -127,7 +132,9 @@ const AppContainer = createAppContainer(AppNavigator);
 export default class App extends React.Component {
   constructor(props){
     super(props)
-    console.log(props) 
+    console.log(props)
+    
+
   }
   render() {
     

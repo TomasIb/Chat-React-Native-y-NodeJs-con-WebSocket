@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, FlatList,TouchableOpacity,StyleSheet ,Dimensions,Alert} from "react-native";
+import { View, Text, FlatList,TouchableOpacity,StyleSheet ,Dimensions,Alert,DeviceEventEmitter} from "react-native";
 import { ListItem } from "react-native-elements";
 import { Icon } from 'react-native-elements'
 import FlashMessage from "react-native-flash-message";
-
+import equal from 'fast-deep-equal'
+import {YellowBox} from 'react-native';
 
 var {height, width} = Dimensions.get('window');
 
@@ -25,9 +26,9 @@ const list = [
 
 class Chats extends Component {
     constructor(props){
-      super(props)
-      console.log(props) 
-      this.state = {  
+    super(props)
+    YellowBox.ignoreWarnings(['Warning:']);
+    this.state = {  
           chatsList: props.screenProps.chatsList,
           refreshing: false,
           contactsList : props.screenProps.contactsList,
@@ -36,15 +37,24 @@ class Chats extends Component {
           
           
           
-      }
+    }
 
-      props.screenProps.refreshChatsFunction = this.loadData.bind(this)
+    props.screenProps.refreshChatsFunction = this.loadData.bind(this)
+    this.eventListener = DeviceEventEmitter.addListener('eventKey',this.loadData);
     }
 
 
     static navigationOptions ={
       title: 'Chats',
     }
+
+    componentDidUpdate(prevProps) {
+      if(!equal(this.props.contactsList, prevProps.contactsList)) // Check if it's a new user, you can also use some unique property, like the ID  (this.props.user.id !== prevProps.user.id)
+      {
+        // this.updateUser();
+        console.log(asdsa)
+      }
+    } 
 
    
 
@@ -102,7 +112,7 @@ loadData = () => {
     return(
     <View style={styles.container}>
    
-      <FlashMessage style= {styles.toast} floating={true} ref="myLocalFlashMessage" hideStatusBar= {true} position="bottom"/> 
+      <FlashMessage style= {styles.toast} floating={true} ref="myLocalFlashMessage" hideStatusBar= {false} position="bottom"/> 
    
       <FlatList
           keyExtractor={this.keyExtractor}
@@ -148,12 +158,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     right: 20, 
     bottom: 20, 
-    backgroundColor: '#F05D3D', 
+    backgroundColor: '#007aff', 
     borderRadius: 30, 
     elevation: 8 
     }, 
     toast:{
       flex: 1,
       backgroundColor:'gray',
+      opacity: 0.5
     }
 });

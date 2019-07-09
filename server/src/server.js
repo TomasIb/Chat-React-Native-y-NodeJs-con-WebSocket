@@ -69,7 +69,7 @@ wss.on('connection', function connection(ws,req){
 
 console.log( server.address() );
 //start our server
-server.listen(8999,'192.168.0.9', () => {
+server.listen(8999,'192.168.8.110', () => {
     console.log(`Server started on port 8999  :)`);
 });
 

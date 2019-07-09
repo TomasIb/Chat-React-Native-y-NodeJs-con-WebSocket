@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { View, Text, FlatList,TouchableOpacity,StyleSheet ,Dimensions,Fragment} from "react-native";
 import { ListItem,Icon } from "react-native-elements";
 import { Chat } from "./Chat";
+import FlashMessage from "react-native-flash-message";
+import {YellowBox} from 'react-native';
 
 
 
@@ -31,7 +33,7 @@ class Contacts extends Component {
 
     constructor(props){
       super(props)
-      console.log(props)
+      YellowBox.ignoreWarnings(['Warning:']);
       this.state = { 
         contactsList : props.screenProps.contactList,
         refreshing:false, 
@@ -48,7 +50,7 @@ class Contacts extends Component {
       title: 'Contactos',
       headerRight:(
                   <TouchableOpacity onPress={() => navigation.navigate('NewContact', this.state) }>
-                    <Icon   name='user-plus' type='font-awesome' color='#F05D3D'  />
+                    <Icon   name='user-plus' type='font-awesome' color='#007aff'  />
                   </TouchableOpacity>
       )
     });
@@ -71,7 +73,7 @@ class Contacts extends Component {
           source: item.avatar_url && { uri: item.avatar_url },
           title: item.username[0]
         }}
-        onPress={()=>{ this.props.navigation.navigate('Chat',this.props.navigation.navigate('Chat',{state: this.state,historial_messages:this.props.screenProps.historial_messages, username:item.username , ip:item.ip}))}}
+        onPress={()=>{ this.props.navigation.navigate('Chat',this.props.navigation.navigate('Chat',{state: this.state,historial_messages:this.props.screenProps.historial_messages, username:item.username , ip:item.ip, avatar:item.avatar_url}))}}
       />
     )
   
@@ -109,6 +111,7 @@ loadData = () => {
 
         return(
         <View style={styles.container}>
+         <FlashMessage style= {styles.toast} floating={true} ref="myLocalFlashMessage" hideStatusBar= {false} position="bottom"/> 
           <FlatList
               keyExtractor={this.keyExtractor}
               data={this.props.screenProps.contacts_list}
@@ -154,6 +157,10 @@ const styles = StyleSheet.create({
     borderRadius: 30, 
     elevation: 8 
     }, 
+    toast:{
+      flex: 1,
+      backgroundColor:'gray'
+    }
  
 
 });
