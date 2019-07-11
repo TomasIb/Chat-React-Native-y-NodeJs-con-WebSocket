@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { GiftedChat } from 'react-native-gifted-chat';
-import {YellowBox} from 'react-native';
+import {YellowBox,Alert} from 'react-native';
 
 
 
@@ -18,6 +18,7 @@ export default class Chat extends Component{
             ip: props.navigation.state.params.ip,
             historial_messages: props.screenProps.historial_messages,
             avatar:props.navigation.state.params.avatar,
+            contact_status: true,
             messageToMe:   {   
                 _id: '',
                 text: '',
@@ -34,16 +35,19 @@ export default class Chat extends Component{
    
   componentWillUnmount = () => {
         this.props.screenProps.socket.onmessage = this.props.screenProps.onmessage;
-       console.log("CHAAOOAOOAOAOAO")
+       
   };
   
  
   
 
-     handleMessage(e){
-         console.log(e.data)
+  handleMessage(e){
+    
        let  data = JSON.parse(e.data)
         if(data.method == "update"){
+          this.setState({
+            contact_status:true
+          })
             let id = this.props.screenProps.historial_messages.length
             this.setState({
                 messageToMe:[{
@@ -69,6 +73,14 @@ export default class Chat extends Component{
 
         }
 
+      if(data.response.status == "Error"){
+        this.setState({
+          contact_status:false
+        })
+        Alert.alert(
+          'Contacto no conectado'
+       )
+      }
             
 
     }
@@ -196,8 +208,9 @@ export default class Chat extends Component{
                     
                     
                     this.props.screenProps.socket.send(JSON.stringify(this.messageToServer))
-                    
+                    if(this.state.contact_status == true){
                     this.onSend(message)
+                    }
                     
                 }}
                 user={{

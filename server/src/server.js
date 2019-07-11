@@ -13,6 +13,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({  server });
 
 const send= (ws,data) =>{
+    console.log(data)
     const d = JSON.stringify({
         jsonrpc: '2.0',
         ...data
@@ -43,7 +44,7 @@ wss.on('connection', function connection(ws,req){
 
     ws.on('message' ,(msg) => {
         const data = JSON.parse(msg);
-        console.log(msg)
+     
         
         switch(data.method){
             
@@ -52,7 +53,7 @@ wss.on('connection', function connection(ws,req){
                 if(destStatus(data.params.to) == true){
                     wss.clients.forEach(client=>{
                         if(client._socket.remoteAddress == data.params.to){                       
-                            send(client,{method: 'update',params:{message: data.params.message, from: ws._socket.remoteAddress}})
+                            send(client,{method: 'update',response:{status:'Success'},params:{message: data.params.message, from: ws._socket.remoteAddress}})
         
                         } 
                     })
@@ -67,7 +68,7 @@ wss.on('connection', function connection(ws,req){
 
 })
 
-console.log( server.address() );
+
 //start our server
 server.listen(8999,'192.168.8.110', () => {
     console.log(`Server started on port 8999  :)`);

@@ -8,17 +8,17 @@ import Chat from './components/Chat'
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 import { showMessage, hideMessage } from "react-native-flash-message";
 
-var hostname = "192.168.0.9"
+var hostname = "192.168.8.110"
 var port = "8999";
 const socket = new W3CWebSocket("ws://192.168.8.110:8999");
 
 
-push_message=""
+
 historial_messages = []
 contacts_list = []
 chats_list = []
 refreshChatsFunction = ""
-overlay = false
+
 
 
 
@@ -36,7 +36,6 @@ socket.onmessage = function(e) {
               _id: '2',
               name: data.params.from
           }
-          
       }
 
       historial_messages.push(msg)
@@ -62,6 +61,7 @@ socket.onmessage = function(e) {
               }
             })
         }
+        
          name = exist_contact(data.params.from)
          if(name == false){
             name = data.params.from
@@ -146,7 +146,7 @@ export default class App extends React.Component {
                                       refreshContactsFunction: "", 
                                       chats_list: chats_list, 
                                       refreshChatsFunction:"",
-                                      overlay: overlay
+                                      
                                       }} />;
   
     

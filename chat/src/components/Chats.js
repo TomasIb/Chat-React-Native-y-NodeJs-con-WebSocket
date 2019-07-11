@@ -34,9 +34,7 @@ class Chats extends Component {
           contactsList : props.screenProps.contactsList,
           messages: [],
           historial_messages: props.screenProps.historial_messages,
-          
-          
-          
+
     }
 
     props.screenProps.refreshChatsFunction = this.loadData.bind(this)
